@@ -1,0 +1,53 @@
+import os
+
+os.chdir("C:\\Users\\dell\\.vscode\\projects\\python projects\\login system")
+
+number_file = open("num.txt", "rb+")
+number = int(number_file.read() or 0)
+
+def is_id_available(id_number):
+    for root, dirs, files in os.walk("."):
+        for file in files:
+            if file == "profile.txt":
+                with open(os.path.join(root, file), "r") as f:
+                    content = f.read()
+                    if f"ID: {id_number}" in content:
+                        return False
+    return True
+
+while True:
+    Name = input("Enter your name: ")
+    age = int(input("Enter your age: "))
+    
+    while True:
+        id_number = int(input("Enter your id number: "))
+        if is_id_available(id_number):
+            break
+        else:
+            print("This ID is already available. Please try another one.")
+
+    Quit = input("Quit yes or no: ")
+    
+    if "yes" in Quit.lower():
+        break
+
+    profile_dir = f"profile{number}"
+    
+    # Check if the directory already exists
+    while os.path.exists(profile_dir):
+        number += 1
+        profile_dir = f"profile{number}"
+    
+    os.mkdir(profile_dir)
+    
+    with open(os.path.join(profile_dir, "profile.txt"), "w") as pro_file:
+        pro_file.write(f"Name: {Name}\nAge: {age}\nID: {id_number}")
+
+    number += 1
+    number_file.seek(0)
+    number_file.write(str(number).encode())
+    number_file.truncate()
+
+    print(f"Profile {number - 1} created successfully.")
+
+number_file.close()
